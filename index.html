@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Raef Monroe — Engineering Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --charcoal:#1E2126;
+    --charcoal-2:#262A31;
+    --steel:#8B93A0;
+    --steel-dim:#565D68;
+    --paper:#F2EFE9;
+    --paper-dim:#E4E0D6;
+    --yellow:#F5B700;
+    --blue:#3E6A96;
+    --line: rgba(242,239,233,0.14);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--charcoal);
+    color:var(--paper);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.stamp{
+    font-family:'Oswald',sans-serif;
+    text-transform:uppercase;
+    letter-spacing:0.03em;
+  }
+  .mono{ font-family:'IBM Plex Mono',monospace; }
+  a{ color: inherit; }
+
+  /* ---------- top bar ---------- */
+  .topbar{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:22px 6vw;
+    border-bottom:1px solid var(--line);
+    position:sticky; top:0; z-index:50;
+    background:rgba(30,33,38,0.92);
+    backdrop-filter: blur(6px);
+  }
+  .topbar .name{
+    font-size:15px; letter-spacing:0.12em; font-weight:600;
+  }
+  .topbar .links{ display:flex; gap:22px; font-size:13px; color:var(--steel); }
+  .topbar .links a{ text-decoration:none; border-bottom:1px solid transparent; transition:border-color .2s, color .2s; }
+  .topbar .links a:hover{ color:var(--paper); border-color:var(--yellow); }
+
+  /* ---------- hero / plate ---------- */
+  .hero{
+    padding:64px 6vw 40px;
+    position:relative;
+  }
+  .plate{
+    position:relative;
+    background: linear-gradient(160deg, #2b2f36 0%, #202329 70%);
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:52px 44px;
+    overflow:hidden;
+  }
+  .plate::before{
+    content:"";
+    position:absolute; inset:0;
+    background:
+      repeating-linear-gradient(115deg, rgba(255,255,255,0.02) 0 2px, transparent 2px 26px);
+    pointer-events:none;
+  }
+  .rivet{
+    position:absolute; width:9px; height:9px; border-radius:50%;
+    background: radial-gradient(circle at 35% 30%, #cfd3d8, #6a6f77 60%, #40444b 100%);
+    box-shadow: inset 0 0 2px rgba(0,0,0,0.6);
+  }
+  .rivet.tl{ top:14px; left:14px; } .rivet.tr{ top:14px; right:14px; }
+  .rivet.bl{ bottom:14px; left:14px; } .rivet.br{ bottom:14px; right:14px; }
+
+  .eyebrow{
+    color:var(--yellow); font-size:12px; letter-spacing:0.22em; font-weight:600;
+    margin-bottom:14px;
+  }
+  .plate h1{
+    font-size:clamp(40px,7vw,84px);
+    line-height:0.95; margin:0 0 10px;
+    font-weight:700;
+  }
+  .plate .role{
+    font-size:clamp(15px,2vw,20px);
+    color:var(--steel); font-weight:400; text-transform:none;
+    font-family:'Inter',sans-serif; max-width:620px; line-height:1.5;
+  }
+  .plate-meta{
+    display:flex; flex-wrap:wrap; gap:28px; margin-top:34px;
+    padding-top:24px; border-top:1px solid var(--line);
+  }
+  .plate-meta .item{ font-size:12px; }
+  .plate-meta .item .k{ color:var(--steel-dim); letter-spacing:0.1em; display:block; margin-bottom:4px; }
+  .plate-meta .item .v{ font-family:'IBM Plex Mono',monospace; color:var(--paper); }
+
+  /* ---------- flip switch ---------- */
+  .switch-wrap{
+    display:flex; justify-content:center; margin:46px 0 8px;
+  }
+  .switch{
+    display:flex; border:1px solid var(--line); border-radius:999px;
+    background:var(--charcoal-2); padding:5px; gap:5px;
+  }
+  .switch button{
+    appearance:none; border:none; cursor:pointer;
+    background:transparent; color:var(--steel);
+    font-family:'Oswald',sans-serif; text-transform:uppercase; letter-spacing:0.08em;
+    font-size:13px; padding:11px 26px; border-radius:999px;
+    transition: background .25s, color .25s;
+  }
+  .switch button.active{
+    background:var(--yellow); color:var(--charcoal);
+  }
+  .switch button:focus-visible{ outline:2px solid var(--yellow); outline-offset:2px; }
+  .side-caption{
+    text-align:center; font-size:12px; color:var(--steel-dim);
+    margin-bottom:10px; font-family:'IBM Plex Mono',monospace;
+  }
+
+  /* ---------- flip stage ---------- */
+  .stage{
+    perspective:2200px;
+    padding:0 6vw 90px;
+  }
+  .card3d{
+    position:relative;
+    transform-style:preserve-3d;
+    transition: transform .7s cubic-bezier(.4,.1,.2,1), height .5s ease;
+  }
+  .card3d.is-front{ transform: rotateY(0deg); }
+  .card3d.is-back{ transform: rotateY(180deg); }
+  .face{
+    backface-visibility:hidden;
+    width:100%;
+    position:absolute; top:0; left:0;
+  }
+  .face.back{
+    transform: rotateY(180deg);
+  }
+  @media (prefers-reduced-motion: reduce){
+    .card3d{ transition:none; }
+  }
+
+  /* ---------- section styling ---------- */
+  .section-label{
+    display:flex; align-items:center; gap:14px; margin-bottom:30px;
+  }
+  .section-label .tag{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--charcoal);
+    background:var(--yellow); padding:4px 10px; border-radius:3px; font-weight:600;
+  }
+  .section-label h2{ font-size:26px; margin:0; }
+  .section-label .sub{ color:var(--steel); font-size:13px; margin-left:auto; text-align:right; }
+
+  .project{
+    display:grid; grid-template-columns: 1.1fr 1fr; gap:0;
+    border:1px solid var(--line); border-radius:8px; overflow:hidden;
+    margin-bottom:26px; background:var(--charcoal-2);
+  }
+  .project .photo{ position:relative; min-height:320px; background:#111; }
+  .project .photo img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .project .photo .cap{
+    position:absolute; left:0; right:0; bottom:0;
+    background:linear-gradient(0deg, rgba(0,0,0,0.75), transparent);
+    color:var(--steel); font-family:'IBM Plex Mono',monospace;
+    font-size:11px; padding:20px 16px 10px; letter-spacing:0.03em;
+  }
+  .project .copy{ padding:32px 30px; display:flex; flex-direction:column; }
+  .project .copy h3{ font-size:20px; margin:0 0 6px; }
+  .project .copy .role{
+    color:var(--yellow); font-size:12px; font-family:'IBM Plex Mono',monospace;
+    margin-bottom:16px; letter-spacing:0.04em;
+  }
+  .project .copy p{ color:var(--paper-dim); font-size:14.5px; line-height:1.65; margin:0 0 18px; }
+  .stat-row{ display:flex; gap:22px; margin-top:auto; padding-top:16px; border-top:1px solid var(--line); }
+  .stat{ }
+  .stat .num{ font-family:'IBM Plex Mono',monospace; font-size:22px; color:var(--yellow); font-weight:600; }
+  .stat .lbl{ font-size:10.5px; color:var(--steel-dim); letter-spacing:0.08em; text-transform:uppercase; margin-top:2px; }
+
+  .company-block{
+    display:flex; justify-content:space-between; align-items:baseline;
+    flex-wrap:wrap; gap:10px; margin-bottom:22px;
+    padding-bottom:16px; border-bottom:1px solid var(--line);
+  }
+  .company-block h2{ font-size:24px; margin:0; }
+  .company-block .meta{ font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--steel); }
+
+  .placeholder-card{
+    border:1px dashed var(--line); border-radius:8px; padding:60px 30px;
+    text-align:center; color:var(--steel-dim);
+  }
+  .placeholder-card .big{ font-family:'Oswald',sans-serif; text-transform:uppercase; letter-spacing:0.1em; color:var(--steel); font-size:18px; margin-bottom:8px;}
+  .placeholder-card .small{ font-size:13px; }
+
+  footer{
+    border-top:1px solid var(--line); padding:34px 6vw; text-align:center;
+    color:var(--steel-dim); font-size:12px; font-family:'IBM Plex Mono',monospace;
+  }
+
+  @media (max-width:760px){
+    .project{ grid-template-columns:1fr; }
+    .project .photo{ min-height:220px; }
+    .plate{ padding:38px 22px; }
+    .stage{ padding:0 5vw 70px; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="name">RAEF&nbsp;MONROE</div>
+    <div class="links">
+      <a href="https://www.linkedin.com/in/raef-monroe-7623032bb/" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="#" title="Add your GitHub URL">GitHub</a>
+      <a href="mailto:rmm223@uakron.edu">Email</a>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="plate">
+      <span class="rivet tl"></span><span class="rivet tr"></span>
+      <span class="rivet bl"></span><span class="rivet br"></span>
+      <div class="eyebrow">Mechanical Engineering — University of Akron</div>
+      <h1>Raef Monroe</h1>
+      <p class="role">Hands-on mechanical engineering student who's spent as much time on the shop floor as in the classroom — manufacturing process work at U.S.T Media and drone systems design with the Zips Drone Team.</p>
+      <div class="plate-meta">
+        <div class="item"><span class="k mono">LOCATION</span><span class="v">Magnolia, OH</span></div>
+        <div class="item"><span class="k mono">GPA</span><span class="v">4.0 / 4.0</span></div>
+        <div class="item"><span class="k mono">STATUS</span><span class="v">Open to Co-op — Summer / Fall 2027</span></div>
+        <div class="item"><span class="k mono">TOOLS</span><span class="v">SolidWorks · MATLAB · Arduino</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="switch-wrap">
+    <div class="switch" role="tablist" aria-label="Portfolio side">
+      <button id="btn-front" role="tab" aria-selected="false">Front — Projects</button>
+      <button id="btn-back" role="tab" aria-selected="true">Back — Professional</button>
+    </div>
+  </div>
+  <div class="side-caption" id="side-caption">// VIEWING: PROFESSIONAL EXPERIENCE SIDE</div>
+
+  <div class="stage">
+    <div class="card3d is-back" id="card3d">
+
+      <!-- FRONT FACE : Personal Projects / Drone Team -->
+      <div class="face front">
+        <div class="section-label">
+          <span class="tag">FRONT</span>
+          <h2>Personal Projects &amp; Zips Drone Team</h2>
+        </div>
+
+        <div class="company-block">
+          <h2>Zips Drone Team — The University of Akron</h2>
+          <div class="meta">MEMBER · 2025–PRESENT</div>
+        </div>
+        <p style="color:var(--steel);font-size:14px;max-width:680px;margin:-10px 0 26px;line-height:1.6;">
+          Designing and building competition drones with the team, from weight-critical structural parts to a from-scratch high-speed airframe.
+        </p>
+
+        <div class="project">
+          <div class="photo">
+            <img src="images/drone-landing-gear.jpg" alt="CAD concept of the drone team's new long-range truss frame and landing gear">
+            <div class="cap">LONG-RANGE TRUSS FRAME — NEW LANDING GEAR CONCEPT</div>
+          </div>
+          <div class="copy">
+            <h3>Truss-Frame Drone — Landing Gear Redesign</h3>
+            <div class="role">STRUCTURAL DESIGN · FEA VALIDATED</div>
+            <p>
+              Designed a new landing gear for the team's long-range truss-frame drone that cuts significant weight from the airframe while still handling the full stress loads of flight and landing. The redesign has been validated through FEA simulation ahead of build.
+            </p>
+            <div class="stat-row">
+              <div class="stat"><div class="num">-1lb</div><div class="lbl">Weight Saved</div></div>
+              <div class="stat"><div class="num">FEA</div><div class="lbl">Simulation Validated</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="project">
+          <div class="photo">
+            <img src="images/fpv-drone-prototype.png" alt="SolidWorks CAD model of the first high-speed FPV drone prototype">
+            <div class="cap">FIRST PROTOTYPE — SOLIDWORKS ASSEMBLY (PRE-ELECTRONICS)</div>
+          </div>
+          <div class="copy">
+            <h3>300+ MPH High-Speed FPV Drone — First Prototype</h3>
+            <div class="role">SOLO CAD DESIGN · IN PROGRESS</div>
+            <p>
+              Self-designed the first full prototype for a sub-team project targeting 300+ mph flight — modeling the frame, arms, and motor mounts myself in SolidWorks. This early pass leaves out electronics on purpose; its job is to lock in the basic geometry and component layout before the real build begins.
+            </p>
+            <div class="stat-row">
+              <div class="stat"><div class="num">300+</div><div class="lbl">Target Speed (mph)</div></div>
+              <div class="stat"><div class="num">SOLO</div><div class="lbl">Frame &amp; Layout Design</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="company-block" style="margin-top:44px;">
+          <h2>Class Project — Autonomous RC Ball-Collector Car</h2>
+          <div class="meta">SOLIDWORKS + ARDUINO</div>
+        </div>
+        <p style="color:var(--steel);font-size:14px;max-width:680px;margin:-10px 0 26px;line-height:1.6;">
+          A course project built to pick up ping-pong balls and drop them off at designated zones — part mechanical design, part embedded systems.
+        </p>
+
+        <div class="project">
+          <div class="photo">
+            <img src="images/rc-ball-collector.png" alt="SolidWorks assembly of the RC ball-collector car chassis">
+            <div class="cap">CHASSIS ASSEMBLY — SOLIDWORKS</div>
+          </div>
+          <div class="copy">
+            <h3>RC Ball-Collector Car</h3>
+            <div class="role">CHASSIS DESIGN · ELECTRONICS · PROGRAMMING</div>
+            <p>
+              Designed the chassis assembly and wheel system in SolidWorks, then took ownership of the electronics side — wiring the car and programming its ball-collection behavior in Arduino so it could pick up ping-pong balls and drop them at marked target zones.
+            </p>
+            <div class="stat-row">
+              <div class="stat"><div class="num">4WD</div><div class="lbl">Chassis &amp; Wheel Design</div></div>
+              <div class="stat"><div class="num">ARD</div><div class="lbl">Arduino-Controlled</div></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- BACK FACE : Professional Experience -->
+      <div class="face back">
+        <div class="section-label">
+          <span class="tag">BACK</span>
+          <h2>Professional Experience</h2>
+        </div>
+
+        <div class="company-block">
+          <h2>U.S.T Media — Bolivar, OH</h2>
+          <div class="meta">MANUFACTURING &amp; PROCESS ENGINEERING INTERN · MAY–AUG 2026</div>
+        </div>
+        <p style="color:var(--steel);font-size:14px;max-width:680px;margin:-10px 0 26px;line-height:1.6;">
+          Supported production of Zurn's pre-sloped trench drain systems, working directly on the resin-casting line and alongside the shop's CNC finishing process.
+        </p>
+
+        <div class="project">
+          <div class="photo">
+            <img src="images/cnc-verification.jpg" alt="5-axis CNC router on the shop floor at U.S.T Media">
+            <div class="cap">5-AXIS CNC ROUTER — U.S.T MEDIA, BOLIVAR OH</div>
+          </div>
+          <div class="copy">
+            <h3>CNC Hole-Pattern Quality Checks</h3>
+            <div class="role">SUPPORTING ROLE · SHOP FLOOR</div>
+            <p>
+              CNC programming wasn't part of my day-to-day, but I worked alongside the machine operators to check finished trench sections against engineering drawings — confirming hole placement, spacing, and count matched spec before parts moved downstream. Catching mismatches early kept out-of-spec pieces from reaching assembly.
+            </p>
+            <div class="stat-row">
+              <div class="stat"><div class="num">100%</div><div class="lbl">Spec Compliance Checked</div></div>
+              <div class="stat"><div class="num">5-AX</div><div class="lbl">CNC Platform</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="project">
+          <div class="photo">
+            <img src="images/camel-trench-1002.jpg" alt="Finished 1002-series Camel trench drain sections staged for shipment">
+            <div class="cap">1002-SERIES CAMEL TRENCH DRAINS — READY FOR SHIP</div>
+          </div>
+          <div class="copy">
+            <h3>Camel Line Resin Casting &amp; Process Fix</h3>
+            <div class="role">RESIN MIXING &amp; PUMP OPERATIONS</div>
+            <p>
+              Ran the resin mixing and pumping process used to cast the Camel line's trench sections, including the 1002 series shown here. After noticing a recurring slowdown point on the line, I traced the cause and helped implement a fix — raising throughput in that step by 10%. That work fed into a broader Camel-line productivity gain of up to 15% over the internship.
+            </p>
+            <div class="stat-row">
+              <div class="stat"><div class="num">+10%</div><div class="lbl">Line-Step Throughput</div></div>
+              <div class="stat"><div class="num">+15%</div><div class="lbl">Overall Camel Output</div></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    RAEF MONROE — MECHANICAL ENGINEERING PORTFOLIO — REV 1 — 2026
+  </footer>
+
+<script>
+  const card = document.getElementById('card3d');
+  const btnFront = document.getElementById('btn-front');
+  const btnBack = document.getElementById('btn-back');
+  const caption = document.getElementById('side-caption');
+  const frontFace = card.querySelector('.face.front');
+  const backFace = card.querySelector('.face.back');
+
+  function syncHeight(faceEl){
+    card.style.height = faceEl.scrollHeight + 'px';
+  }
+
+  function showFront(){
+    card.classList.remove('is-back'); card.classList.add('is-front');
+    btnFront.classList.add('active'); btnBack.classList.remove('active');
+    btnFront.setAttribute('aria-selected','true'); btnBack.setAttribute('aria-selected','false');
+    caption.textContent = '// VIEWING: PERSONAL PROJECTS SIDE';
+    syncHeight(frontFace);
+  }
+  function showBack(){
+    card.classList.remove('is-front'); card.classList.add('is-back');
+    btnBack.classList.add('active'); btnFront.classList.remove('active');
+    btnBack.setAttribute('aria-selected','true'); btnFront.setAttribute('aria-selected','false');
+    caption.textContent = '// VIEWING: PROFESSIONAL EXPERIENCE SIDE';
+    syncHeight(backFace);
+  }
+  btnFront.addEventListener('click', showFront);
+  btnBack.addEventListener('click', showBack);
+  window.addEventListener('resize', () => {
+    syncHeight(card.classList.contains('is-front') ? frontFace : backFace);
+  });
+  showBack();
+</script>
+
+</body>
+</html>
